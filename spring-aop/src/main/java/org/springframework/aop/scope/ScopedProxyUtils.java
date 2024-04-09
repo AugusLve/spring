@@ -44,6 +44,7 @@ public abstract class ScopedProxyUtils {
 
 
 	/**
+	 * bean 属性解析
 	 * Generate a scoped proxy for the supplied target bean, registering the target
 	 * bean with an internal name and setting 'targetBeanName' on the scoped proxy.
 	 * @param definition the original bean definition
@@ -89,6 +90,7 @@ public abstract class ScopedProxyUtils {
 		targetDefinition.setPrimary(false);
 
 		// Register the target bean as separate bean in the factory.
+		//将beanName 和beanDefinition 放入beanfactory的map 中
 		registry.registerBeanDefinition(targetBeanName, targetDefinition);
 
 		// Return the scoped proxy definition as primary bean definition

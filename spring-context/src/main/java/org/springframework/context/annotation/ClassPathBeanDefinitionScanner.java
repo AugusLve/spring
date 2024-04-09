@@ -263,6 +263,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 
 	/**
 	 * 扫描包，并路径的bean放入map 中
+	 * 利用reader注册AppConfig为BeanDefintion，类型为AnnotatedGenericBeanDefnition
 	 * Perform a scan within the specified base packages,
 	 * returning the registered bean definitions.
 	 * <p>This method does <i>not</i> register an annotation config processor
