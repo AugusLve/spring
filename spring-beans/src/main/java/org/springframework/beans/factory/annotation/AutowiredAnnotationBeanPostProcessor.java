@@ -156,6 +156,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 	 * standard {@link Autowired @Autowired} and {@link Value @Value} annotations.
 	 * <p>Also supports JSR-330's {@link javax.inject.Inject @Inject} annotation,
 	 * if available.
+	 * //会解析@Autowired及@Value的值
 	 */
 	@SuppressWarnings("unchecked")
 	public AutowiredAnnotationBeanPostProcessor() {

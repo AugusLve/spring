@@ -48,6 +48,7 @@ public interface TransactionDefinition {
 	 * Analogous to the EJB transaction attribute of the same name.
 	 * <p>This is typically the default setting of a transaction definition,
 	 * and typically defines a transaction synchronization scope.
+	 * 支持当前事物，不存在则创建
 	 */
 	int PROPAGATION_REQUIRED = 0;
 
@@ -67,6 +68,7 @@ public interface TransactionDefinition {
 	 * synchronization conflicts at runtime). If such nesting is unavoidable, make sure
 	 * to configure your transaction manager appropriately (typically switching to
 	 * "synchronization on actual transaction").
+	 * 支持当前事物，不存在则已非事物方式运行
 	 * @see org.springframework.transaction.support.AbstractPlatformTransactionManager#setTransactionSynchronization
 	 * @see org.springframework.transaction.support.AbstractPlatformTransactionManager#SYNCHRONIZATION_ON_ACTUAL_TRANSACTION
 	 */
@@ -77,6 +79,7 @@ public interface TransactionDefinition {
 	 * exists. Analogous to the EJB transaction attribute of the same name.
 	 * <p>Note that transaction synchronization within a {@code PROPAGATION_MANDATORY}
 	 * scope will always be driven by the surrounding transaction.
+	 * 支持当前事物，不存在则直接报错
 	 */
 	int PROPAGATION_MANDATORY = 2;
 
@@ -91,6 +94,7 @@ public interface TransactionDefinition {
 	 * <p>A {@code PROPAGATION_REQUIRES_NEW} scope always defines its own
 	 * transaction synchronizations. Existing synchronizations will be suspended
 	 * and resumed appropriately.
+	 * 如果当前存在事物，则创建一个新事物运行
 	 * @see org.springframework.transaction.jta.JtaTransactionManager#setTransactionManager
 	 */
 	int PROPAGATION_REQUIRES_NEW = 3;
@@ -106,6 +110,7 @@ public interface TransactionDefinition {
 	 * <p>Note that transaction synchronization is <i>not</i> available within a
 	 * {@code PROPAGATION_NOT_SUPPORTED} scope. Existing synchronizations
 	 * will be suspended and resumed appropriately.
+	 * 不支持事物，以非事物方式运行
 	 * @see org.springframework.transaction.jta.JtaTransactionManager#setTransactionManager
 	 */
 	int PROPAGATION_NOT_SUPPORTED = 4;
@@ -115,6 +120,7 @@ public interface TransactionDefinition {
 	 * exists. Analogous to the EJB transaction attribute of the same name.
 	 * <p>Note that transaction synchronization is <i>not</i> available within a
 	 * {@code PROPAGATION_NEVER} scope.
+	 * 不支持事物，如果存在事物则直接报错
 	 */
 	int PROPAGATION_NEVER = 5;
 
@@ -127,6 +133,7 @@ public interface TransactionDefinition {
 	 * {@link org.springframework.jdbc.datasource.DataSourceTransactionManager}
 	 * when working on a JDBC 3.0 driver. Some JTA providers might support
 	 * nested transactions as well.
+	 * 如果存在当前事务，则在嵌套事务中执行
 	 * @see org.springframework.jdbc.datasource.DataSourceTransactionManager
 	 */
 	int PROPAGATION_NESTED = 6;
@@ -135,6 +142,8 @@ public interface TransactionDefinition {
 	/**
 	 * Use the default isolation level of the underlying datastore.
 	 * All other levels correspond to the JDBC isolation levels.
+	 **使用底层数据存储的默认隔离级别。
+	 * *所有其他级别对应JDBC隔离级别
 	 * @see java.sql.Connection
 	 */
 	int ISOLATION_DEFAULT = -1;
@@ -146,6 +155,7 @@ public interface TransactionDefinition {
 	 * transaction before any changes in that row have been committed (a "dirty read").
 	 * If any of the changes are rolled back, the second transaction will have
 	 * retrieved an invalid row.
+	 * 读未提交
 	 * @see java.sql.Connection#TRANSACTION_READ_UNCOMMITTED
 	 */
 	int ISOLATION_READ_UNCOMMITTED = 1;  // same as java.sql.Connection.TRANSACTION_READ_UNCOMMITTED;
@@ -155,6 +165,7 @@ public interface TransactionDefinition {
 	 * phantom reads can occur.
 	 * <p>This level only prohibits a transaction from reading a row
 	 * with uncommitted changes in it.
+	 * 读已提交
 	 * @see java.sql.Connection#TRANSACTION_READ_COMMITTED
 	 */
 	int ISOLATION_READ_COMMITTED = 2;  // same as java.sql.Connection.TRANSACTION_READ_COMMITTED;
@@ -166,6 +177,7 @@ public interface TransactionDefinition {
 	 * in it, and it also prohibits the situation where one transaction reads a row,
 	 * a second transaction alters the row, and the first transaction re-reads the row,
 	 * getting different values the second time (a "non-repeatable read").
+	 * 可重复读
 	 * @see java.sql.Connection#TRANSACTION_REPEATABLE_READ
 	 */
 	int ISOLATION_REPEATABLE_READ = 4;  // same as java.sql.Connection.TRANSACTION_REPEATABLE_READ;
@@ -179,6 +191,7 @@ public interface TransactionDefinition {
 	 * that satisfies that {@code WHERE} condition, and the first transaction
 	 * re-reads for the same condition, retrieving the additional "phantom" row
 	 * in the second read.
+	 * 序列化
 	 * @see java.sql.Connection#TRANSACTION_SERIALIZABLE
 	 */
 	int ISOLATION_SERIALIZABLE = 8;  // same as java.sql.Connection.TRANSACTION_SERIALIZABLE;
@@ -187,6 +200,7 @@ public interface TransactionDefinition {
 	/**
 	 * Use the default timeout of the underlying transaction system,
 	 * or none if timeouts are not supported.
+	 * 默认超时时间
 	 */
 	int TIMEOUT_DEFAULT = -1;
 

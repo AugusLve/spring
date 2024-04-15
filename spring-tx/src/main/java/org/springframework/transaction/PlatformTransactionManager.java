@@ -63,6 +63,7 @@ public interface PlatformTransactionManager extends TransactionManager {
 	 * @throws IllegalTransactionStateException if the given transaction definition
 	 * cannot be executed (for example, if a currently active transaction is in
 	 * conflict with the specified propagation behavior)
+	 * 获取当前激活的事务或者创建一个事务
 	 * @see TransactionDefinition#getPropagationBehavior
 	 * @see TransactionDefinition#getIsolationLevel
 	 * @see TransactionDefinition#getTimeout

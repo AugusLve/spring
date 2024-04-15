@@ -97,7 +97,7 @@ import org.springframework.util.Assert;
  * resources operating on the underlying JDBC {@code Connection}. This allows for
  * setup analogous to {@code JtaTransactionManager}, in particular with respect to
  * lazily registered ORM resources (e.g. a Hibernate {@code Session}).
- *
+ *DataSourceTransactionManager 事务管理器
  * @author Juergen Hoeller
  * @since 02.05.2003
  * @see #setNestedTransactionAllowed

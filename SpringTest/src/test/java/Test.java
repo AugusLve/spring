@@ -6,7 +6,9 @@ import service.impl.StudentBeanService;
  * @date 2024/4/8 13:42
  * @description
  */
+
 public class Test {
+
 
 	public static void main(String[] args) {
 			AnnotationConfigApplicationContext annotationConfigApplicationContext=new AnnotationConfigApplicationContext("service");

@@ -72,7 +72,7 @@ import org.springframework.transaction.UnexpectedRollbackException;
  * They should implement the {@code java.io.Serializable} marker interface in
  * that case, and potentially a private {@code readObject()} method (according
  * to Java serialization rules) if they need to restore any transient state.
- *
+ * Spring 抽象事务管理器
  * @author Juergen Hoeller
  * @since 28.03.2003
  * @see #setTransactionSynchronization
@@ -103,6 +103,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 	/**
 	 * Never active transaction synchronization, not even for actual transactions.
+	 * 永远不要活动事务同步，即使是对实际事务也是如此。
 	 */
 	public static final int SYNCHRONIZATION_NEVER = 2;
 
@@ -333,6 +334,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 	 * This implementation handles propagation behavior. Delegates to
 	 * {@code doGetTransaction}, {@code isExistingTransaction}
 	 * and {@code doBegin}.
+	 * 获取事务状态，并开启事务
 	 * @see #doGetTransaction
 	 * @see #isExistingTransaction
 	 * @see #doBegin
@@ -342,22 +344,25 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 			throws TransactionException {
 
 		// Use defaults if no transaction definition given.
+		//1.获取事务属性
 		TransactionDefinition def = (definition != null ? definition : TransactionDefinition.withDefaults());
-
+        // 2.通过事务管理器获取事务
 		Object transaction = doGetTransaction();
 		boolean debugEnabled = logger.isDebugEnabled();
-
+       //3.处理已经存在的事务 ，处理事务传播
 		if (isExistingTransaction(transaction)) {
 			// Existing transaction found -> check propagation behavior to find out how to behave.
 			return handleExistingTransaction(def, transaction, debugEnabled);
 		}
 
 		// Check definition settings for new transaction.
+		//检查是否超时
 		if (def.getTimeout() < TransactionDefinition.TIMEOUT_DEFAULT) {
 			throw new InvalidTimeoutException("Invalid transaction timeout", def.getTimeout());
 		}
 
 		// No existing transaction found -> check propagation behavior to find out how to proceed.
+		//无事物存在则保存
 		if (def.getPropagationBehavior() == TransactionDefinition.PROPAGATION_MANDATORY) {
 			throw new IllegalTransactionStateException(
 					"No existing transaction found for transaction marked with propagation 'mandatory'");
@@ -370,6 +375,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				logger.debug("Creating new transaction with name [" + def.getName() + "]: " + def);
 			}
 			try {
+				//开启事物
 				return startTransaction(def, transaction, debugEnabled, suspendedResources);
 			}
 			catch (RuntimeException | Error ex) {
@@ -390,14 +396,17 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 
 	/**
 	 * Start a new transaction.
+	 * 开启事物
 	 */
 	private TransactionStatus startTransaction(TransactionDefinition definition, Object transaction,
 			boolean debugEnabled, @Nullable SuspendedResourcesHolder suspendedResources) {
-
+        //开始事物同步
 		boolean newSynchronization = (getTransactionSynchronization() != SYNCHRONIZATION_NEVER);
 		DefaultTransactionStatus status = newTransactionStatus(
 				definition, transaction, true, newSynchronization, debugEnabled, suspendedResources);
+		//开始事物
 		doBegin(transaction, definition);
+		//2.事务管理器开启事务同步
 		prepareSynchronization(status, definition);
 		return status;
 	}

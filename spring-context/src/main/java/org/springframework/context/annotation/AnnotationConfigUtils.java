@@ -137,7 +137,7 @@ public abstract class AnnotationConfigUtils {
 		registerAnnotationConfigProcessors(registry, null);
 	}
 
-	/**
+	/** 注册所有相关的注解处理器
 	 * Register all relevant annotation post processors in the given registry.
 	 * @param registry the registry to operate on
 	 * @param source the configuration source element (already extracted)
@@ -163,6 +163,7 @@ public abstract class AnnotationConfigUtils {
 		Set<BeanDefinitionHolder> beanDefs = new LinkedHashSet<>(8);
 
 		//解析配置类的BeanFactoryPostProcessor会进行扫描
+		//不包含internalConfigurationAnnotationProcessor 则创建ConfigurationClassPostProcessor
 		if (!registry.containsBeanDefinition(CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(ConfigurationClassPostProcessor.class);
 			def.setSource(source);
@@ -177,6 +178,7 @@ public abstract class AnnotationConfigUtils {
 		}
         //自Beanfaxtory中添加CommonAnnotationBeanPostProcessor对应的BeanDefimition
 		//会处理bean中的@Resource注解进行依赖注入
+		//
 		// Check for JSR-250 support, and if present add the CommonAnnotationBeanPostProcessor.
 		if (jsr250Present && !registry.containsBeanDefinition(COMMON_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(CommonAnnotationBeanPostProcessor.class);

@@ -941,7 +941,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		BeanDefinition existingDefinition = this.beanDefinitionMap.get(beanName);
 		if (existingDefinition != null) {
-			if (!isAllowBeanDefinitionOverriding()) {
+			if (!isAllowBeanDefinitionOverriding()) {//不允许名称相同的bean覆盖
 				throw new BeanDefinitionOverrideException(beanName, beanDefinition, existingDefinition);
 			}
 			else if (existingDefinition.getRole() < beanDefinition.getRole()) {
@@ -952,7 +952,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							existingDefinition + "] with [" + beanDefinition + "]");
 				}
 			}
-			else if (!beanDefinition.equals(existingDefinition)) {
+			else if (!beanDefinition.equals(existingDefinition)) {//同名bean 定义不一致
 				if (logger.isDebugEnabled()) {
 					logger.debug("Overriding bean definition for bean '" + beanName +
 							"' with a different definition: replacing [" + existingDefinition +
@@ -966,10 +966,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							"] with [" + beanDefinition + "]");
 				}
 			}
+			//覆盖原有bean 定义
 			this.beanDefinitionMap.put(beanName, beanDefinition);
 		}
 		else {
-			if (hasBeanCreationStarted()) {
+			if (hasBeanCreationStarted()) {//bean已经创建
 				// Cannot modify startup-time collection elements anymore (for stable iteration)
 				synchronized (this.beanDefinitionMap) {
 					this.beanDefinitionMap.put(beanName, beanDefinition);
@@ -977,6 +978,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 					updatedDefinitions.addAll(this.beanDefinitionNames);
 					updatedDefinitions.add(beanName);
 					this.beanDefinitionNames = updatedDefinitions;
+					//更新单例bean的名称
 					removeManualSingletonName(beanName);
 				}
 			}
@@ -990,9 +992,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 
 		if (existingDefinition != null || containsSingleton(beanName)) {
+			//重置bean定义
 			resetBeanDefinition(beanName);
 		}
-		else if (isConfigurationFrozen()) {
+		else if (isConfigurationFrozen()) {//允许bean定义缓存
+			//清空类型缓存
 			clearByTypeCache();
 		}
 	}
@@ -1026,7 +1030,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		resetBeanDefinition(beanName);
 	}
 
-	/**
+	/** 重置所有bean定义
 	 * Reset all bean definition caches for the given bean,
 	 * including the caches of beans that are derived from it.
 	 * <p>Called after an existing bean definition has been replaced or removed,
@@ -1039,14 +1043,17 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	 */
 	protected void resetBeanDefinition(String beanName) {
 		// Remove the merged bean definition for the given bean, if already created.
+		//清空bean定义
 		clearMergedBeanDefinition(beanName);
 
 		// Remove corresponding bean from singleton cache, if any. Shouldn't usually
 		// be necessary, rather just meant for overriding a context's default beans
 		// (e.g. the default StaticMessageSource in a StaticApplicationContext).
+		//销毁所有bean缓存
 		destroySingleton(beanName);
 
 		// Notify all post-processors that the specified bean definition has been reset.
+		//通知所有post-processors当前bean已经重置
 		for (BeanPostProcessor processor : getBeanPostProcessors()) {
 			if (processor instanceof MergedBeanDefinitionPostProcessor) {
 				((MergedBeanDefinitionPostProcessor) processor).resetBeanDefinition(beanName);
@@ -1054,6 +1061,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 
 		// Reset all bean definitions that have the given bean as parent (recursively).
+		//循环遍历重置
 		for (String bdName : this.beanDefinitionNames) {
 			if (!beanName.equals(bdName)) {
 				BeanDefinition bd = this.beanDefinitionMap.get(bdName);
@@ -1098,7 +1106,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		updateManualSingletonNames(set -> set.remove(beanName), set -> set.contains(beanName));
 	}
 
-	/**
+	/**更新单例bean
 	 * Update the factory's internal set of manual singleton names.
 	 * @param action the modification action
 	 * @param condition a precondition for the modification action

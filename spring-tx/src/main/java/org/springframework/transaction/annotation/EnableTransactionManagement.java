@@ -174,6 +174,7 @@ public @interface EnableTransactionManagement {
 	 * time. This approach has no negative impact in practice unless one is explicitly
 	 * expecting one type of proxy vs another, e.g. in tests.
 	 */
+	/**false:使用JDK代理；true：使用CGLIB代理*/
 	boolean proxyTargetClass() default false;
 
 	/**
@@ -186,12 +187,14 @@ public @interface EnableTransactionManagement {
 	 * scenario. For a more advanced mode of interception, consider switching this to
 	 * {@link AdviceMode#ASPECTJ}.
 	 */
+	/**事务通知的方式*/
 	AdviceMode mode() default AdviceMode.PROXY;
 
 	/**
 	 * Indicate the ordering of the execution of the transaction advisor
 	 * when multiple advices are applied at a specific joinpoint.
 	 * <p>The default is {@link Ordered#LOWEST_PRECEDENCE}.
+	 * 排序
 	 */
 	int order() default Ordered.LOWEST_PRECEDENCE;
 
