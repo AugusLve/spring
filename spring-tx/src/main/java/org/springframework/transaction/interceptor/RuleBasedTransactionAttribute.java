@@ -126,6 +126,7 @@ public class RuleBasedTransactionAttribute extends DefaultTransactionAttribute i
 	 * Winning rule is the shallowest rule (that is, the closest in the
 	 * inheritance hierarchy to the exception). If no rule applies (-1),
 	 * return false.
+	 * 判断是否回滚异常，true回滚，false不回滚
 	 * @see TransactionAttribute#rollbackOn(java.lang.Throwable)
 	 */
 	@Override
@@ -133,12 +134,16 @@ public class RuleBasedTransactionAttribute extends DefaultTransactionAttribute i
 		if (logger.isTraceEnabled()) {
 			logger.trace("Applying rules to determine whether transaction should rollback on " + ex);
 		}
-
+       // 层级1:根据回滚规则、异常层级判断
 		RollbackRuleAttribute winner = null;
 		int deepest = Integer.MAX_VALUE;
 
 		if (this.rollbackRules != null) {
 			for (RollbackRuleAttribute rule : this.rollbackRules) {
+				// getDepth 表示异常匹配的深度。
+				// -1 表示没有匹配异常
+				// 0 表示异常类型一致
+				// 正值表示父类匹配的深度
 				int depth = rule.getDepth(ex);
 				if (depth >= 0 && depth < deepest) {
 					deepest = depth;
@@ -152,6 +157,7 @@ public class RuleBasedTransactionAttribute extends DefaultTransactionAttribute i
 		}
 
 		// User superclass behavior (rollback on unchecked) if no rule matches.
+		//层级2:没有回滚规则，使用父类判断逻辑
 		if (winner == null) {
 			logger.trace("No relevant rollback rule found: applying default rules");
 			return super.rollbackOn(ex);

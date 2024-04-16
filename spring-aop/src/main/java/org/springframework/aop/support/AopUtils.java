@@ -249,6 +249,7 @@ public abstract class AopUtils {
 			for (Method method : methods) {
 				if (introductionAwareMethodMatcher != null ?
 						introductionAwareMethodMatcher.matches(method, targetClass, hasIntroductions) :
+						//循环遍历当前类的方法，是否匹配规则
 						methodMatcher.matches(method, targetClass)) {
 					return true;
 				}

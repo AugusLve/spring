@@ -128,6 +128,7 @@ public class DefaultTransactionAttribute extends DefaultTransactionDefinition im
 	 * except that TransactionTemplate also rolls back on undeclared checked exceptions
 	 * (a corner case). For declarative transactions, we expect checked exceptions to be
 	 * intentionally declared as business exceptions, leading to a commit by default.
+	 * // 默认的事务回滚条件
 	 * @see org.springframework.transaction.support.TransactionTemplate#execute
 	 */
 	@Override
